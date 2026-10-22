@@ -133,5 +133,5 @@ def delete_student(stu_id:int, db:Session=Depends(get_db), current_user:dict=Dep
     db.commit()
 
     return {
-        "Message":"Student got deleted successfully"
+       "Message":"Student got deleted successfully"
     }
