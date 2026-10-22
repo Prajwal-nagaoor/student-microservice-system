@@ -16,3 +16,11 @@ class StudentResponse(BaseModel):
     course : str
     sem : int
 
+class update_stu_request(BaseModel):
+    id : int
+    name :str
+    ph_num : int
+    email : EmailStr
+    dept : str
+    course : str
+    sem : int
