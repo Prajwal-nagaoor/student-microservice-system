@@ -1,0 +1,353 @@
+{
+  "info": {
+    "name": "Student Management Microservices API",
+    "description": "Postman collection for the FastAPI Auth Service, Student Service, Course Service, and API Gateway. Requests target the API Gateway at http://127.0.0.1:8003. Register and login first; the login test script saves the returned access token when the response contains access_token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8003"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "student_id",
+      "value": "1"
+    },
+    {
+      "key": "course_id",
+      "value": "1"
+    },
+    {
+      "key": "dept_name",
+      "value": "Computer Science"
+    },
+    {
+      "key": "course_name",
+      "value": "Python"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"rahul123\",\n  \"password\": \"StrongPassword123!\",\n  \"email\": \"rahul123@example.com\",\n  \"first_name\": \"Rahul\",\n  \"last_name\": \"Kumar\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login response is successful', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data.access_token) { pm.collectionVariables.set('token', data.access_token); }",
+                  "else if (data.token) { pm.collectionVariables.set('token', data.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"rahul123\",\n  \"password\": \"StrongPassword123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/auth/login"
+          }
+        },
+        {
+          "name": "My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{base_url}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Create Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Kumar\",\n  \"ph_num\": \"9876543210\",\n  \"email\": \"rahul.student@example.com\",\n  \"dept\": \"Computer Science\",\n  \"course\": \"Python\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/students"
+          }
+        },
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{base_url}}/all-student"
+          }
+        },
+        {
+          "name": "Get Student By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/get-student?stu_id={{student_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "get-student"
+              ],
+              "query": [
+                {
+                  "key": "stu_id",
+                  "value": "{{student_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"name\": \"Rahul Kumar Updated\",\n  \"ph_num\": \"9876543210\",\n  \"email\": \"rahul.updated@example.com\",\n  \"dept\": \"Computer Science\",\n  \"course\": \"Python\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/update-student"
+          }
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/delete-student?stu_id={{student_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "delete-student"
+              ],
+              "query": [
+                {
+                  "key": "stu_id",
+                  "value": "{{student_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Departments",
+      "item": [
+        {
+          "name": "Add Department",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/add-dept?dept_name={{dept_name}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "add-dept"
+              ],
+              "query": [
+                {
+                  "key": "dept_name",
+                  "value": "{{dept_name}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Departments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{base_url}}/departments"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        {
+          "name": "Add Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/add-course?course_name={{course_name}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "add-course"
+              ],
+              "query": [
+                {
+                  "key": "course_name",
+                  "value": "{{course_name}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Courses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{base_url}}/courses"
+          }
+        },
+        {
+          "name": "Get Course By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{base_url}}/courses/{{course_id}}"
+          }
+        },
+        {
+          "name": "Delete Course",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{base_url}}/courses/{{course_id}}"
+          }
+        }
+      ]
+    }
+  ]
+}
