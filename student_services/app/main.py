@@ -90,14 +90,15 @@ def update_student(update_data:update_stu_request,db:Session=Depends(get_db), cu
         Student.email == update_data.email
     ).first()
 
-    if email_exists:
+    if not email_exists:
         raise HTTPException(
             status_code=404,
             detail="Email already exists, try with different email"
         )
 
     ph_num_exists = db.query(Student).filter(
-        Student.ph_num == update_data.ph_num
+        Student.ph_num == update_data.ph_num,
+        len(str(update_data.ph_num)) == 10
     ).first()
 
     if ph_num_exists:
